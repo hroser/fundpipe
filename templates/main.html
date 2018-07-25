@@ -1,0 +1,160 @@
+<!doctype html>
+
+<html lang="de">
+
+<style type="text/css">
+
+body {
+font-family: sans-serif;
+max-width: 640px;
+margin: 0 auto;
+}
+
+textarea {
+width: 94%;
+resize: none;
+overflow: hidden;
+min-height: 25px;
+margin-left: 3%;
+}
+
+.title{
+width: 94%;
+font: 30px sans-serif;
+font-weight: bold;
+text-align: center;
+margin-left: 3%;
+}
+
+.error {
+color: red;
+font: 11px sans-serif;
+}
+
+.url-available {
+color: green;
+font: 11px sans-serif;
+}
+
+.center {
+margin: 0 auto;
+text-align: center;
+}
+
+.centertable {
+width: 90%;
+max-width: 520px;
+margin: 0 auto;
+}
+
+.centerinfo {
+width: 90%;
+max-width: 520px;
+margin: 0 auto;
+font: 12px sans-serif;
+}
+	
+.message {
+width: 90%;
+max-width: 520px;
+margin: 0 auto;
+font: 10px sans-serif;
+}
+
+.centertopinfo {
+width: 90%;
+max-width: 520px;
+margin: 0 auto;
+font: 16px sans-serif;
+}
+
+.formatting-info {
+width: 94%;
+height: 10px;
+margin: 0 auto;
+font: 13px sans-serif;
+}
+
+table, tr, td {
+    border: none;
+}
+
+img {
+max-width: 90%;
+}
+
+.createpagelabel {
+display: inline-block;
+vertical-align:top;
+width: 230px;
+}
+
+.createpageinput {
+display: inline-block;
+vertical-align:top;
+width: 280px;
+margin-bottom: 15px
+}
+
+</style>
+
+
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="/favicon.ico">
+	<title>Fundpipe</title>
+	<meta name="description" content="Open a fundpipe to raise bitcoin funds">
+	<meta name="keywords" content="bitcoin funds funding">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style type="text/css"></style>
+</head>
+
+<body>
+	
+
+	<form id="search_address_form" method="POST" enctype="multipart/form-data">
+	<br>
+	<h1 align="center">Fundpipe</h1>
+	<br><br>
+	<div class="centertopinfo">
+		<center>
+		<br>
+		<br><br>
+		Open a fundpipe:
+		<br><br>
+		Pipe name:
+    <input type="text" style="font: 16px sans-serif; width: 260px;" name="pipe_name" value="{{pipe_name}}">
+		<div class="error">
+			{% if err_pipe_name_format == True %}
+			Invalid pipe name format (must be between 2 and 160 characters and may contain a-z, 0-9 and -).
+			{% endif %}
+		</div>
+		<div class="error">
+			{% if err_pipe_name_exists == True %}
+			Name already exists.
+			{% endif %}
+		</div>
+		<br><br>
+		Bitcoin address for receiving funds:
+    <input type="text" style="font: 16px sans-serif; width: 260px;" name="pipe_owner_address" value="{{pipe_owner_address}}">
+		<div class="error">
+			{% if err_no_valid_btc_address == True %}
+			Not valid bitcoin address.
+			{% endif %}
+		</div>
+		<br><br>
+    <button type="submit" style="font: 16px sans-serif; width: 100px;" id="button_open_pipe">OK</button>
+		<br><br>
+		</center>
+	</form>
+	
+		<div class="centerinfo">
+		<br><br>
+		If there are any issues with Fundpipe, please contact me:
+		<br>
+		<a href="mailto:support@..." style="color: black;">support@...</a> 
+		</div>
+
+	<br><br><br><br>
+</body>
+</html>
