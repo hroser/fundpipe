@@ -3,7 +3,7 @@ import re
 import random
 import string
 import hashlib
-import requests
+from google.appengine.api import urlfetch
 import json
 import logging
 
@@ -47,21 +47,30 @@ def validate_email(email_inputstring):
 		return None	
 	
 def validate_btc_address(btc_address):
+	# read key file
+	keys_str = open('keys.json').read()
+	keys = json.loads(keys_str)
+	
 	# get bitcoin balance, use to verify bitcoin address
 	api_key = keys['blockio-apikey']
 	url = 'https://block.io/api/v2/get_address_balance/?api_key={}&addresses={}'.format(api_key, btc_address)
-	response = requests.get(url)
+	response = urlfetch.fetch(url)
 	
-	if 'error_message' in response.json()['data']:
-		logging.debug("blockio api call error: " + response.json()['data']['error_message'])
-		
-	if (response.status_code == '200') and (response.json()['status'] == 'success'):
+	# load json answer
+	try:
+		j = json.loads(response.content)
+	except: 
+		return None
+	
+	# check answer
+	if (response.status_code == 200) and (j['status'] == 'success') :
 		return btc_address
 	else:
+		if 'error_message' in j['data']:
+			logging.debug("blockio api call error: " + j['data']['error_message'])
 		return None	
 		
 #function make_salt returns a string of 5 random characters
-
 def make_salt():
 	return ''.join(random.choice(string.letters) for x in xrange(5))
 	

@@ -118,12 +118,9 @@ margin-bottom: 15px
 	<br><br>
 	<div class="centertopinfo">
 		<center>
-		<br>
-		<br><br>
-		Open a fundpipe:
-		<br><br>
-		Pipe name:
-    <input type="text" style="font: 16px sans-serif; width: 260px;" name="pipe_name" value="{{pipe_name}}">
+		<br><br><br><br>
+		Pipe name:<br>
+    <input type="text" style="font: 16px sans-serif; width: 320px;" name="pipe_name" value="{{pipe_name}}">
 		<div class="error">
 			{% if err_pipe_name_format == True %}
 			Invalid pipe name format (must be between 2 and 160 characters and may contain a-z, 0-9 and -).
@@ -135,8 +132,8 @@ margin-bottom: 15px
 			{% endif %}
 		</div>
 		<br><br>
-		Bitcoin address for receiving funds:
-    <input type="text" style="font: 16px sans-serif; width: 260px;" name="pipe_owner_address" value="{{pipe_owner_address}}">
+		Bitcoin address for receiving funds:<br>
+    <input type="text" style="font: 16px sans-serif; width: 320px;" name="pipe_owner_address" value="{{pipe_owner_address}}">
 		<div class="error">
 			{% if err_no_valid_btc_address == True %}
 			Not valid bitcoin address.

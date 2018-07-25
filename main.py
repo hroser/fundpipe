@@ -127,7 +127,9 @@ class MainPage(Handler):
 			err_pipe_name_format = True
 			
 		# check for bitcoin address errors
-		# TODO
+		pipe_owner_address_val = fptools.validate_btc_address(pipe_owner_address)
+		if not pipe_owner_address_val:
+			err_no_valid_btc_address = True
 			
 		# output errors
 		if (err_pipe_name_format == True) or (err_pipe_name_exists == True) or (err_no_valid_btc_address == True):
@@ -142,6 +144,9 @@ class MainPage(Handler):
 		pipe = Fundpipe(id=pipe_id)
 		pipe.owner_address = pipe_owner_address
 		pipe.put()
+		
+		# redirect to pipe page
+		self.redirect(str(pipe_name_val))
 		
 class NewMessagePage(Handler):
 	def get(self):
