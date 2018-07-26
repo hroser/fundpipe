@@ -1,0 +1,135 @@
+<!doctype html>
+
+<html lang="de">
+
+<style type="text/css">
+
+body {
+font: 14px sans-serif;
+max-width: 640px;
+margin: 0 auto;
+}
+
+.title{
+width: 94%;
+font: 30px sans-serif;
+font-weight: bold;
+text-align: center;
+margin-left: 3%;
+}
+
+.error {
+color: red;
+font: 11px sans-serif;
+}
+
+.url-available {
+color: green;
+font: 11px sans-serif;
+}
+
+.center {
+margin: 0 auto;
+text-align: center;
+}
+
+.centerinfo {
+width: 90%;
+max-width: 520px;
+margin: 0 auto;
+font: 12px sans-serif;
+}
+
+.centertopinfo {
+width: 90%;
+max-width: 450px;
+margin: 0 auto;
+font: 14px sans-serif;
+}
+	
+	.fundhistory {
+width: 90%;
+max-width: 450px;
+margin: 0 auto;
+font: 14px sans-serif;
+}
+
+.formatting-info {
+width: 94%;
+height: 10px;
+margin: 0 auto;
+font: 13px sans-serif;
+}
+
+table, tr, td {
+    border: none;
+}
+
+img {
+max-width: 90%;
+}
+
+</style>
+
+
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="/favicon.ico">
+	<title>Fundpipe</title>
+	<meta name="description" content="Open a fundpipe to raise bitcoin funds">
+	<meta name="keywords" content="bitcoin funds funding">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style type="text/css"></style>
+</head>
+
+<body>
+	
+	<br><br>
+	<h3 align="center">Fundpipe:</h3>
+	<h3 align="center">{{pipe_name}}</h3>
+	<br><br>
+	
+	<div class="centertopinfo">
+		<center>
+		Funding address: <br><br>
+		<img src="http://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{pipe_address}}" alt="" title="" /><br><br>
+		{{pipe_address}}<br><br>
+		</center>
+	</div>
+	
+	
+	<div class="fundhistory">
+		<center>
+		Funding history: <br><br>
+		{% for fund in funds %}
+				<br><br><br>
+        ID: {{ fund.key.id() }}
+				<br>
+        Received: {{ fund.created }}
+				<br>
+        Sender: {{ fund.sender }}
+				<br>
+        Fund: {{ fund.fund_amount }}
+				<br>
+        Refund from owner: {{ fund.refund_owner }}
+				<br>
+        Refund from subsequent funds: {{ fund.refund_subsequent }}
+				<br>
+        Payout pending: {{ fund.payout_pending }}
+    {% endfor %}
+		</center>
+	</div>
+	
+		<br><br><br>
+		<div class="centerinfo">
+		<center>
+		<br><br>
+		If there are any issues with this service, please contact us:
+		<br>
+		<a href="mailto:fundpipe.contact@gmail.com" style="color: black;">fundpipe.contact@gmail.com</a> 
+		</center>
+		</div>
+
+	<br><br><br><br>
+</body>
+</html>

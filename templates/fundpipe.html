@@ -42,7 +42,7 @@ font: 12px sans-serif;
 
 .centertopinfo {
 width: 90%;
-max-width: 450px;
+max-width: 350px;
 margin: 0 auto;
 font: 14px sans-serif;
 }
@@ -83,13 +83,13 @@ max-width: 90%;
 	
 	<div class="centertopinfo">
 		<center>
-		1. Open a fundpipe and start a call for funds. Share your fundpipe link.<br><br>
-		2. Every fund will be split. Half will go to your project. Half will be distributed proportionally to all previous funders.<br><br>
+		1. Open a fundpipe and start a call for funds by sharing the link to your pipe<br><br>
+		2. Every fund will be split. Half will go to your project. Half will be distributed to all previous funders.<br><br>
 		3. The funders of your project will get returns while funding is still active. Early funders will receive more returns.<br><br>
-		4. You can refund to your pipe. Refunds will be distributed proportionally to all funders.<br><br>
-		5. A pipe can be closed by refunding all previous funds. Every pipe can stay open indefinitely.<br><br><br><br>
-		<b>All funds are considered risk investments in your project.<br><br>
-		You are not committed to partially or fully return any of the funds.</b><br>
+		4. You can refund to your pipe. Refunds will be distributed to all funders.<br><br>
+		5. A pipe can be closed by refunding all previous funds. Every pipe can stay open indefinitely.<br><br>
+		<b>No fund is guaranteed to be partially or fully returned.</b><br>
+		<b>You are not committed to partially or fully return any of the funds.</b>
 		</center>
 	</div>
 
@@ -117,25 +117,15 @@ max-width: 90%;
 			{% endif %}
 		</div>
 		<br><br>
-    <button type="submit" style="font: 14px sans-serif; width: 200px;" id="button_open_pipe">Open your fundpipe</button>
-		<br><br>
-		<div class="error">
-			{% if err_creating_new_address == True %}
-			Error creating BTC address for new pipe.
-			{% endif %}
-		</div>
-		<br><br>
+    <button type="submit" style="font: 14px sans-serif; width: 100px;" id="button_open_pipe">Open pipe</button>
+		<br><br><br><br>
 		</center>
 	</form>
-	
-	<center>
-	<b>Fundpipe service fee: 1% of payouts</b><br><br><br><br>
-	</center>
 	
 		<div class="centerinfo">
 		<center>
 		<br><br>
-		If there are any issues with this service, please contact us:
+		If there are any issues with Fundpipe, please contact me:
 		<br>
 		<a href="mailto:fundpipe.contact@gmail.com" style="color: black;">fundpipe.contact@gmail.com</a> 
 		</center>

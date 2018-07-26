@@ -4,8 +4,20 @@ import random
 import string
 import hashlib
 from google.appengine.api import urlfetch
+from google.appengine.ext import ndb
 import json
 import logging
+
+class Fund(ndb.Model):
+	"""Models a Fund object"""
+	created = ndb.DateTimeProperty(auto_now_add=True)
+	fundpipe = ndb.StringProperty()
+	sender = ndb.StringProperty()
+	receiver = ndb.StringProperty()
+	fund_amount = ndb.IntegerProperty()		# in satoshis
+	refund_owner = ndb.IntegerProperty()		# in satoshis
+	refund_subsequent = ndb.IntegerProperty()		# in satoshis
+	payout_pending = ndb.IntegerProperty()		# in satoshis
 
 def format_text_bold(text_inputstring):
 	text_string = text_inputstring.group()
@@ -67,8 +79,40 @@ def validate_btc_address(btc_address):
 		return btc_address
 	else:
 		if 'error_message' in j['data']:
-			logging.debug("blockio api call error: " + j['data']['error_message'])
+			logging.debug("blockio api call error get_address_balance: " + j['data']['error_message'])
 		return None	
+	
+def create_pipe_address(pipe_id):
+	# read key file
+	keys_str = open('keys.json').read()
+	keys = json.loads(keys_str)
+	
+	# get bitcoin balance, use to verify bitcoin address
+	api_key = keys['blockio-apikey']
+	url = 'https://block.io/api/v2/get_new_address/?api_key={}&label={}'.format(api_key, pipe_id)
+	response = urlfetch.fetch(url)
+	
+	# load json answer
+	try:
+		j = json.loads(response.content)
+	except: 
+		return None
+	
+	# check answer
+	if (response.status_code == 200) and (j['status'] == 'success') :
+		return j['data']['address']
+	else:
+		if 'error_message' in j['data']:
+			logging.debug("blockio api call error get_new_address: " + j['data']['error_message'])
+		return None	
+	
+def ndb_add_fund():
+	# add fund to database
+		newfund = Fund()
+		newfund.sender = "ooooo";
+		newfund.fundpipe = pipe_id;
+		newfund.fund_amount = 1000;
+		newfund.put()
 		
 #function make_salt returns a string of 5 random characters
 def make_salt():

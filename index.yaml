@@ -1,0 +1,7 @@
+indexes:
+
+- kind: Fund
+  properties:
+  - name: fundpipe
+  - name: created
+    direction: desc
