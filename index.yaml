@@ -5,3 +5,9 @@ indexes:
   - name: fundpipe
   - name: created
     direction: desc
+    
+- kind: Refund
+  properties:
+  - name: fundpipe
+  - name: created
+    direction: desc

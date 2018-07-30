@@ -8,16 +8,36 @@ from google.appengine.ext import ndb
 import json
 import logging
 
+class Fundpipe(ndb.Model):
+	"""Models a Fundpipe object"""
+	created = ndb.DateTimeProperty(auto_now_add=True)
+	pipe_name = ndb.StringProperty()
+	owner_address = ndb.StringProperty()
+	fund_address = ndb.StringProperty()
+	refund_address = ndb.StringProperty()
+	funds_received = ndb.IntegerProperty()		# in satoshis
+	refunds_received = ndb.IntegerProperty()		# in satoshis
+	payout_pending = ndb.IntegerProperty()		# in satoshis
+	status = ndb.StringProperty()		# opening, open, closed
+	update_required = ndb.BooleanProperty()		# if true, fundpipe needs to be updated
+
 class Fund(ndb.Model):
 	"""Models a Fund object"""
 	created = ndb.DateTimeProperty(auto_now_add=True)
 	fundpipe = ndb.StringProperty()
 	sender = ndb.StringProperty()
 	receiver = ndb.StringProperty()
-	fund_amount = ndb.IntegerProperty()		# in satoshis
-	refund_owner = ndb.IntegerProperty()		# in satoshis
-	refund_subsequent = ndb.IntegerProperty()		# in satoshis
+	funded = ndb.IntegerProperty()		# in satoshis
+	received = ndb.IntegerProperty()		# in satoshis
 	payout_pending = ndb.IntegerProperty()		# in satoshis
+	
+class Refund(ndb.Model):
+	"""Models a Refund object"""
+	created = ndb.DateTimeProperty(auto_now_add=True)
+	fundpipe = ndb.StringProperty()
+	sender = ndb.StringProperty()
+	receiver = ndb.StringProperty()
+	refunded = ndb.IntegerProperty()		# in satoshis
 
 def format_text_bold(text_inputstring):
 	text_string = text_inputstring.group()
@@ -82,14 +102,14 @@ def validate_btc_address(btc_address):
 			logging.debug("blockio api call error get_address_balance: " + j['data']['error_message'])
 		return None	
 	
-def create_pipe_address(pipe_id):
+def create_pipe_address():
 	# read key file
 	keys_str = open('keys.json').read()
 	keys = json.loads(keys_str)
 	
 	# get bitcoin balance, use to verify bitcoin address
 	api_key = keys['blockio-apikey']
-	url = 'https://block.io/api/v2/get_new_address/?api_key={}&label={}'.format(api_key, pipe_id)
+	url = 'https://block.io/api/v2/get_new_address/?api_key={}'.format(api_key)
 	response = urlfetch.fetch(url)
 	
 	# load json answer
@@ -111,8 +131,67 @@ def ndb_add_fund():
 		newfund = Fund()
 		newfund.sender = "ooooo";
 		newfund.fundpipe = pipe_id;
-		newfund.fund_amount = 1000;
+		newfund.funded = 1000;
 		newfund.put()
+		
+def update_pipe(pipe_id, amount):
+	# distribute amount to funds
+	proportion_project = 0.2
+	
+	# load fundpipe and funds
+	funds = Fund.query(Fund.fundpipe == pipe_id)
+	pipe = ndb.Key(Fundpipe, pipe_id).get()
+	
+	# update funds
+	if (pipe.volume > 0):
+		for fund in funds:
+			# calculate and add proportion
+			fund_add = int(float(fund.funded)/float(pipe.volume) * float((1-proportion_project) * amount))
+			fund.received += fund_add
+			fund.payout_pending += fund_add
+		ndb.put_multi(funds)
+		# add partial amount to project
+		pipe_add = int(proportion_project * amount)
+	else:
+		# add full amount to project
+		pipe_add = amount
+	
+	# update pipe
+	pipe.volume += amount
+	pipe.received += pipe_add
+	pipe.payout_pending += pipe_add
+	pipe.put()
+	
+	return
+
+def process_amount_received_notification(data):
+	notification_data = json.loads(data)
+	
+	# load pipe
+	address = notification_data['address']
+	pipe_list = Fundpipe.query(Fundpipe.pipe_address == address).fetch(1)
+
+	if len(pipe_list) == 0:
+		return 1
+	pipe = pipe_list[0]
+	pipe_id = pipe.key.id()
+	
+	# convert btc to satoshis
+	amount = int(float(notification_data['amount_received']) * 100000000)
+	
+	# add amount to pipe
+	update_pipe(pipe_id, amount)
+	
+	# create fund
+	newfund = Fund()
+	newfund.sender = "test22";
+	newfund.fundpipe = pipe_id;
+	newfund.funded = amount;
+	newfund.received = 0;
+	newfund.payout_pending = 0;
+	newfund.put()
+	
+	return 0
 		
 #function make_salt returns a string of 5 random characters
 def make_salt():

@@ -6,7 +6,7 @@
 
 body {
 font: 14px sans-serif;
-max-width: 640px;
+max-width: 90%;
 margin: 0 auto;
 }
 
@@ -47,9 +47,16 @@ margin: 0 auto;
 font: 14px sans-serif;
 }
 	
-	.fundhistory {
+.fundhistory {
 width: 90%;
-max-width: 450px;
+max-width: 1200px;
+margin: 0 auto;
+font: 14px sans-serif;
+}
+	
+.refundhistory {
+width: 90%;
+max-width: 600px;
 margin: 0 auto;
 font: 14px sans-serif;
 }
@@ -68,65 +75,133 @@ table, tr, td {
 img {
 max-width: 90%;
 }
-
 </style>
-
-
+	
 <head>
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="/favicon.ico">
-	<title>Fundpipe</title>
-	<meta name="description" content="Open a fundpipe to raise bitcoin funds">
-	<meta name="keywords" content="bitcoin funds funding">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fundpipe {{pipe_name}}</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
 	<style type="text/css"></style>
 </head>
 
 <body>
 	
 	<br><br>
-	<h3 align="center">Fundpipe:</h3>
-	<h3 align="center">{{pipe_name}}</h3>
+	<h4 align="center">Fundpipe</h4>
+	<br><br>
+	<h1 align="center">{{pipe_name}}</h1>
 	<br><br>
 	
 	<div class="centertopinfo">
 		<center>
-		Funding address: <br><br>
+		{% if pipe_status == "opening" %}
+		We are opening your pipe. Please reload this page in a minute...
+		{% else %}
+		Bitcoin address for funding: <br><br>
 		<img src="http://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{pipe_address}}" alt="" title="" /><br><br>
-		{{pipe_address}}<br><br>
+		{{pipe_address}}
+		<br><br><br>
+		Every fund gets split: 
+		<b>
+		50% to project, 50% to previous funders
+		{% endif %}
+		<br><br>
+		</b>
+		<br><br>
+			<table style="width:450px">
+			<tr>
+				<td align="left">Project received total</td>
+				<td align="right">{{"%.8f BTC"|format(project_received_total / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Project pending payout (-2% fee)</td>
+				<td align="right">{{"%.8f BTC"|format(pipe_payout_pending / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Funders received from subsequent funds</td>
+				<td align="right">{{"%.8f BTC"|format(funders_received_from_funders * 0.5 / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Funders received from project refunds</td>
+				<td align="right">{{"%.8f BTC"|format(funders_received_from_refunds / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Funders received total</td>
+				<td align="right">{{"%.8f BTC"|format(funders_received_total / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Total funded</td>
+				<td align="right">{{"%.8f BTC"|format(total_funded / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Total refunded</td>
+				<td align="right">{{"%.8f BTC"|format(total_refunded / 100000000.0)}}</td> 
+			</tr>
+			<tr>
+				<td align="left">Pipe status</td>
+				<td align="right">{{pipe_status}}</td> 
+			</tr>
+			</table>
 		</center>
 	</div>
 	
+	{% if refunds|length > 0 %}
+	<div class="refundhistory">
+	<table style="width:100%">
+  <tr>
+    <th align="left">Count</th>
+    <th align="left">Time</th> 
+		<th align="right">Refund</th>
+  </tr>
+	{% for refund in refunds %}
+		<tr>
+		<td align="left">{{ loop.revindex }}</td>
+    <td align="left">{{ refund.created.strftime("%Y-%m-%d, %H:%M:%S") }}</td> 
+		<td align="right">{{ "%.8f BTC"|format(refund.refunded / 100000000.0) }}</td>
+		</tr>
+  {% endfor %}
+</table>
+</div>
+	{% endif %}
 	
+	{% if funds|length > 0 %}	
 	<div class="fundhistory">
-		<center>
-		Funding history: <br><br>
-		{% for fund in funds %}
-				<br><br><br>
-        ID: {{ fund.key.id() }}
-				<br>
-        Received: {{ fund.created }}
-				<br>
-        Sender: {{ fund.sender }}
-				<br>
-        Fund: {{ fund.fund_amount }}
-				<br>
-        Refund from owner: {{ fund.refund_owner }}
-				<br>
-        Refund from subsequent funds: {{ fund.refund_subsequent }}
-				<br>
-        Payout pending: {{ fund.payout_pending }}
-    {% endfor %}
-		</center>
-	</div>
+	<table style="width:100%">
+  <tr>
+    <th align="left">Count</th>
+    <th align="left">Time</th> 
+		<th align="right">Paid</th>
+		<th align="right">Received</th>
+		<th align="right">Received (% of paid)</th>
+		<th align="right">Pending payout (-2% fee)</th>
+  </tr>
+	{% for fund in funds %}
+		<tr>
+		<td align="left">{{ loop.revindex }}</td>
+    <td align="left">{{ fund.created.strftime("%Y-%m-%d, %H:%M:%S") }}</td> 
+		<td align="right">{{ "%.8f BTC"|format(fund.funded / 100000000.0) }}</td>
+		<td align="right">{{ "%.8f BTC"|format(fund.received / 100000000.0) }}</td>
+		<td align="right">{{ "%.2f %%"|format(fund.received * 100.0 / fund.funded) }}</td>
+		<td align="right">{{ "%.8f BTC"|format(fund.payout_pending / 100000000.0) }}</td>
+		</tr>
+  {% endfor %}
+</table>
+</div>
+	{% endif %}
 	
 		<br><br><br>
 		<div class="centerinfo">
 		<center>
 		<br><br>
-		If there are any issues with this service, please contact us:
+		Fundpipe is an open source project:
 		<br>
-		<a href="mailto:fundpipe.contact@gmail.com" style="color: black;">fundpipe.contact@gmail.com</a> 
+		<a href="http://github.com/fundpipe/fundpipe" style="color: black;">http://github.com/fundpipe/fundpipe</a> 
+		<br><br>
+		If there are any issues with Fundpipe, please contact me:
+		<br>
+		<a href="mailto:support@fundpipe.net" style="color: black;">support@fundpipe.net</a> 
 		</center>
 		</div>
 

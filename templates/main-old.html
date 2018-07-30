@@ -78,20 +78,25 @@ max-width: 90%;
 <body>
 	
 	<br><br>
-	<h4 align="center">Fundpipe</h4>
+	<h1 align="center">Fundpipe</h1>
 	<br><br>
 	
 	<div class="centertopinfo">
 		<center>
-		Every fund to your pipe will be split:<br><br>
-		<b>50% to your project, 50% to previous funders</b><br><br>
+		1. Open a fundpipe and start a call for funds. Share your fundpipe link.<br><br>
+		2. Every fund will be split. Half will go to your project. Half will be distributed proportionally to all previous funders.<br><br>
+		3. The funders of your project will get returns while funding is still active. Early funders will receive more returns.<br><br>
+		4. You can refund to your pipe. Refunds will be distributed proportionally to all funders.<br><br>
+		5. A pipe can be closed by refunding all previous funds. Every pipe can stay open indefinitely.<br><br><br><br>
+		<b>All funds are considered risk investments in your project.<br><br>
+		You are not committed to partially or fully return any of the funds.</b><br>
 		</center>
 	</div>
 
 	<form id="search_address_form" method="POST" enctype="multipart/form-data">
 	<center>
-		<br><br>
-		Pipe name<br>
+		<br><br><br><br>
+		New fundpipe name:<br>
     <input type="text" style="font: 14px sans-serif; width: 320px;" name="pipe_name" value="{{pipe_name}}">
 		<div class="error">
 			{% if err_pipe_name_format == True %}
@@ -104,7 +109,7 @@ max-width: 90%;
 			{% endif %}
 		</div>
 		<br><br>
-		Bitcoin address for payouts<br>
+		Bitcoin address for receiving funds:<br>
     <input type="text" style="font: 14px sans-serif; width: 320px;" name="pipe_owner_address" value="{{pipe_owner_address}}">
 		<div class="error">
 			{% if err_no_valid_btc_address == True %}
@@ -112,7 +117,7 @@ max-width: 90%;
 			{% endif %}
 		</div>
 		<br><br>
-    <button type="submit" style="font: 14px sans-serif; width: 200px;" id="button_open_pipe">Open pipe</button>
+    <button type="submit" style="font: 14px sans-serif; width: 200px;" id="button_open_pipe">Open your fundpipe</button>
 		<br><br>
 		<div class="error">
 			{% if err_creating_new_address == True %}
@@ -123,17 +128,16 @@ max-width: 90%;
 		</center>
 	</form>
 	
+	<center>
+	<b>Fee: 2% of payouts</b><br><br><br><br>
+	</center>
 	
 		<div class="centerinfo">
 		<center>
 		<br><br>
-		Fundpipe is an open source project:
+		If there are any issues with Fundpipe, please contact us:
 		<br>
-		<a href="http://github.com/fundpipe/fundpipe" style="color: black;">http://github.com/fundpipe/fundpipe</a> 
-		<br><br>
-		If there are any issues please contact me:
-		<br>
-		<a href="mailto:support@fundpipe.net" style="color: black;">support@fundpipe.net</a> 
+		<a href="mailto:fundpipe.contact@gmail.com" style="color: black;">fundpipe.contact@gmail.com</a> 
 		</center>
 		</div>
 
